@@ -150,6 +150,25 @@
         }
         
         .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+
+        .hero-video {
+            margin-top: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hero-video video {
+            width: 260px;
+            border-radius: 24px;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.5), 0 0 60px var(--accent-glow);
+        }
+
+        .video-caption {
+            font-size: 13px;
+            color: var(--secondary);
+        }
         
         .btn {
             display: inline-flex;
@@ -463,6 +482,13 @@
             <a href="#screenshots" class="btn btn-primary">See the App</a>
             <a href="#how-it-works" class="btn btn-secondary">Learn More</a>
         </div>
+
+        <div class="hero-video">
+            <video autoplay muted loop playsinline controls>
+                <source src="flowreader-demo.mp4" type="video/mp4">
+            </video>
+            <p class="video-caption">RSVP Reader in action — 400 to 650 WPM</p>
+        </div>
     </section>
     
     <section class="screenshots" id="screenshots">
@@ -476,7 +502,7 @@
                 <div class="phone-mockup">
                     <div class="phone-screen">
                         <div class="phone-notch"></div>
-                        <img src="../landing-en/screenshots/library-en.jpg" alt="FlowReader Library" style="width:100%;height:100%;object-fit:cover;border-radius:34px;" onerror="this.style.display='none'">
+                        <img src="https://rep0mancer.github.io/flowreader-landing/screenshot-library.jpg" alt="FlowReader Library" style="width:100%;height:100%;object-fit:cover;border-radius:34px;" onerror="this.style.display='none'">
                     </div>
                 </div>
                 <div class="screen-label">Library</div>
@@ -486,7 +512,7 @@
                 <div class="phone-mockup">
                     <div class="phone-screen">
                         <div class="phone-notch"></div>
-                        <img src="../landing-en/screenshots/settings-en.jpg" alt="FlowReader Settings" style="width:100%;height:100%;object-fit:cover;border-radius:34px;" onerror="this.style.display='none'">
+                        <img src="https://rep0mancer.github.io/flowreader-landing/screenshot-settings.jpg" alt="FlowReader Settings" style="width:100%;height:100%;object-fit:cover;border-radius:34px;" onerror="this.style.display='none'">
                     </div>
                 </div>
                 <div class="screen-label">Settings</div>
@@ -496,7 +522,7 @@
                 <div class="phone-mockup">
                     <div class="phone-screen">
                         <div class="phone-notch"></div>
-                        <img src="../landing-en/screenshots/reader-en.jpg" alt="FlowReader RSVP Reader" style="width:100%;height:100%;object-fit:cover;border-radius:34px;" onerror="this.style.display='none'">
+                        <img src="https://rep0mancer.github.io/flowreader-landing/screenshot-chapters.jpg" alt="FlowReader RSVP Reader" style="width:100%;height:100%;object-fit:cover;border-radius:34px;" onerror="this.style.display='none'">
                     </div>
                 </div>
                 <div class="screen-label">RSVP Reader</div>
