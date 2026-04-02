@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowReader — RSVP Speed Reading App</title>
+    <meta name="description" content="Read any article or book 2-3x faster with RSVP. PDF, ePub, URL import. 100% local & GDPR-compliant.">
+    <meta property="og:title" content="FlowReader — RSVP Speed Reading App">
+    <meta property="og:description" content="Read any article or book 2-3x faster with RSVP Speed Reading.">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:type" content="website">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #0A0A0F;
+            --surface: #14141F;
+            --surface-elevated: #1A1A28;
+            --primary: #FFFFFF;
+            --accent: #6B8AFF;
+            --accent-glow: rgba(107, 138, 255, 0.3);
+            --orp: #FF6B6B;
+            --secondary: #6B7280;
+            --border: #1F1F2E;
+            --success: #4ADE80;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 24px;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent), #8AA2FF);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-links { display: flex; gap: 32px; list-style: none; }
+        .nav-links a { color: var(--secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--primary); }
+        
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg { position: absolute; inset: 0; pointer-events: none; }
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.5;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--secondary);
+            margin-bottom: 32px;
+        }
+        
+        .hero-badge span { color: var(--accent); }
+        
+        .hero h1 {
+            font-size: clamp(40px, 8vw, 72px);
+            font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            max-width: 900px;
+        }
+        
+        .hero h1 .accent {
+            background: linear-gradient(135deg, var(--accent), #A0B4FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--secondary);
+            max-width: 540px;
+            margin-bottom: 48px;
+            line-height: 1.7;
+        }
+        
+        .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-primary:hover { background: #7D93FF; transform: translateY(-2px); }
+        .btn-secondary { background: var(--surface); color: var(--primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--surface-elevated); }
+        
+        /* Screenshots */
+        .screenshots {
+            padding: 80px 24px 120px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .screenshots-header { text-align: center; margin-bottom: 64px; }
+        
+        .section-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+        
+        .section-subtitle {
+            font-size: 17px;
+            color: var(--secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        
+        .phone-mockup {
+            background: var(--surface);
+            border-radius: 44px;
+            border: 2px solid var(--border);
+            padding: 12px;
+            position: relative;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 40px 80px rgba(0,0,0,0.5);
+        }
+        
+        .phone-screen {
+            width: 100%;
+            aspect-ratio: 9/19.5;
+            background: var(--bg);
+            border-radius: 34px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 28px;
+            background: var(--bg);
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+        
+        .phone-notch::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+        }
+        
+        .screen-label {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        /* Features */
+        .features {
+            padding: 120px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .features-center { text-align: center; margin-bottom: 64px; }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.2s;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), #8AA2FF);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+        .feature-card p { font-size: 14px; color: var(--secondary); line-height: 1.6; }
+        
+        /* How it works */
+        .how-it-works {
+            padding: 120px 24px;
+            background: var(--surface);
+        }
+        
+        .how-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            margin-top: 64px;
+            text-align: left;
+        }
+        
+        .step { display: flex; gap: 24px; align-items: flex-start; }
+        
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--bg);
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .step-content p { color: var(--secondary); font-size: 15px; line-height: 1.6; }
+        
+        /* CTA */
+        .cta-section {
+            padding: 120px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.4;
+        }
+        
+        .cta-title {
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .cta-subtitle {
+            font-size: 18px;
+            color: var(--secondary);
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .app-store-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: var(--primary);
+            color: var(--bg);
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .app-store-badge:hover { transform: translateY(-2px); opacity: 0.9; }
+        .app-store-badge span { font-size: 11px; font-weight: 400; display: block; }
+        .app-store-badge strong { font-size: 18px; display: block; }
+        
+        /* Footer */
+        footer {
+            padding: 48px 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--secondary);
+            font-size: 13px;
+        }
+        
+        footer p { margin-bottom: 8px; }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+        
+        .orb-1 { width: 400px; height: 400px; background: rgba(107, 138, 255, 0.15); top: 10%; left: -10%; }
+        .orb-2 { width: 300px; height: 300px; background: rgba(255, 107, 107, 0.1); bottom: 20%; right: -5%; }
+        
+        @media (max-width: 900px) {
+            .screenshots-grid {
+                grid-template-columns: 1fr;
+                max-width: 280px;
+                margin: 0 auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { letter-spacing: -1px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <div class="logo-icon">📖</div>
+                FlowReader
+            </div>
+            <ul class="nav-links">
+                <li><a href="#screenshots">App</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="hero-glow"></div>
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+        </div>
+        
+        <div class="hero-badge">⚡ <span>RSVP</span> — Rapid Serial Visual Presentation</div>
+        
+        <h1>Read <span class="accent">2-3x faster</span><br>without missing a thing</h1>
+        
+        <p class="hero-subtitle">
+            Words appear one at a time with Optimal Recognition Point highlighting. 
+            No eye movement. No distractions. Full concentration on what matters.
+        </p>
+        
+        <div class="hero-cta">
+            <a href="#screenshots" class="btn btn-primary">See the App</a>
+            <a href="#how-it-works" class="btn btn-secondary">Learn More</a>
+        </div>
+    </section>
+    
+    <section class="screenshots" id="screenshots">
+        <div class="screenshots-header">
+            <div class="section-label">The App</div>
+            <h2 class="section-title">Simple. Elegant. Fast.</h2>
+        </div>
+        
+        <div class="screenshots-grid">
+            <div>
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="phone-notch"></div>
+                        <img src="../landing-en/screenshots/library-en.jpg" alt="FlowReader Library" style="width:100%;height:100%;object-fit:cover;border-radius:34px;" onerror="this.style.display='none'">
+                    </div>
+                </div>
+                <div class="screen-label">Library</div>
+            </div>
+            
+            <div>
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="phone-notch"></div>
+                        <img src="../landing-en/screenshots/settings-en.jpg" alt="FlowReader Settings" style="width:100%;height:100%;object-fit:cover;border-radius:34px;" onerror="this.style.display='none'">
+                    </div>
+                </div>
+                <div class="screen-label">Settings</div>
+            </div>
+            
+            <div>
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="phone-notch"></div>
+                        <img src="../landing-en/screenshots/reader-en.jpg" alt="FlowReader RSVP Reader" style="width:100%;height:100%;object-fit:cover;border-radius:34px;" onerror="this.style.display='none'">
+                    </div>
+                </div>
+                <div class="screen-label">RSVP Reader</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="features" id="features">
+        <div class="features-center">
+            <div class="section-label">Features</div>
+            <h2 class="section-title">Everything You Need</h2>
+            <p class="section-subtitle">Professional speed-reading, designed for focused reading. Your data stays private.</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>100 – 1200 WPM</h3>
+                <p>Set your reading speed and boost it automatically with Auto Speed-Up mode.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>ORP Highlighting</h3>
+                <p>The optimal recognition point is highlighted in color — for maximum comprehension while speed reading.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📄</div>
+                <h3>PDF & ePub Import</h3>
+                <p>Import books and documents directly. PDF and ePub are automatically converted to readable text.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>URL Import</h3>
+                <p>Paste an article link and FlowReader extracts the text automatically — no ads, no clutter.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>100% Private</h3>
+                <p>All data stays on your device. No cloud, no tracking, fully GDPR-compliant.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Progress Saved</h3>
+                <p>Your reading position is saved automatically. Pause and continue exactly where you left off.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="how-it-works" id="how-it-works">
+        <div class="how-content">
+            <div class="section-label">How It Works</div>
+            <h2 class="section-title">Get Started in 3 Steps</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Add Your Text</h3>
+                        <p>Paste an article URL, enter text directly, or import a PDF or ePub file. Ready within seconds.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Choose Your Speed</h3>
+                        <p>Set your WPM — from relaxed 100 to challenging 1200. Auto Speed-Up mode ramps up your pace automatically.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Read & Track Progress</h3>
+                        <p>Each word appears centered and focused. After reading, see your stats: words, time, average WPM.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="cta-section">
+        <div class="cta-glow"></div>
+        <h2 class="cta-title">Ready to read faster?</h2>
+        <p class="cta-subtitle">Download FlowReader from the App Store and try it with your next article.</p>
+        
+        <a href="#" class="app-store-badge">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            <div>
+                <span>Coming soon to the</span>
+                <strong>App Store</strong>
+            </div>
+        </a>
+    </section>
+    
+    <footer>
+        <p>FlowReader — RSVP Speed Reading for iOS</p>
+        <p>100% Local • GDPR-Compliant • No Cloud Data</p>
+    </footer>
+</body>
+</html>
