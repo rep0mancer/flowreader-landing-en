@@ -246,6 +246,13 @@
             object-fit: contain;
         }
 
+        .onboarding-video video {
+            width: 100%;
+            height: auto;
+            max-height: 480px;
+            border-radius: 24px;
+        }
+
         /* 3-column row for phone screenshots */
         .screenshots-row {
             display: grid;
@@ -534,7 +541,9 @@
         
         <!-- Onboarding GIF - full width -->
         <div class="onboarding-video">
-            <img src="screenshots/onboarding-slow.mp4" alt="FlowReader Onboarding">
+            <video autoplay muted loop playsinline>
+                <source src="screenshots/onboarding-slow.mp4" type="video/mp4">
+            </video>
         </div>
         
         <!-- 3 Screenshots in a row -->
