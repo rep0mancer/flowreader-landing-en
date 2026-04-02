@@ -227,21 +227,31 @@
             gap: 32px;
         }
 
-        /* 4 column layout for EN version with onboarding GIF */
-        .screenshots-4col {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 24px;
-        }
-
-        .screenshot-wide {
-            grid-column: span 1;
-        }
-
-        .screenshot-wide img {
-            max-height: 500px;
-            object-fit: contain;
+        /* Onboarding GIF - full width above screenshots */
+        .onboarding-gif {
+            width: 100%;
+            max-height: 480px;
+            overflow: hidden;
+            border-radius: 24px;
             background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .onboarding-gif img {
+            width: 100%;
+            height: auto;
+            max-height: 480px;
+            object-fit: contain;
+        }
+
+        /* 3-column row for phone screenshots */
+        .screenshots-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 32px;
         }
         
         .phone-mockup {
@@ -451,25 +461,24 @@
         .orb-2 { width: 300px; height: 300px; background: rgba(255, 107, 107, 0.1); bottom: 20%; right: -5%; }
         
         @media (max-width: 900px) {
-            .screenshots-grid, .screenshots-4col {
+            .screenshots-row {
                 grid-template-columns: 1fr 1fr;
-                max-width: 580px;
-                margin: 0 auto;
+                gap: 16px;
             }
-            .screenshot-wide {
-                grid-column: span 2;
+            .onboarding-gif {
+                max-height: 300px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .screenshots-row {
+                grid-template-columns: 1fr;
             }
         }
         
         @media (max-width: 768px) {
             .nav-links { display: none; }
             .hero h1 { letter-spacing: -1px; }
-            .screenshots-4col {
-                grid-template-columns: 1fr;
-            }
-            .screenshot-wide {
-                grid-column: span 1;
-            }
         }
     </style>
 </head>
@@ -523,13 +532,13 @@
             <h2 class="section-title">Simple. Elegant. Fast.</h2>
         </div>
         
-        <div class="screenshots-grid screenshots-4col">
-            <!-- Onboarding GIF -->
-            <div class="screenshot-wide">
-                <img src="screenshots/onboarding.gif" alt="FlowReader Onboarding" style="width:100%;border-radius:24px;">
-                
-            </div>
-            
+        <!-- Onboarding GIF - full width -->
+        <div class="onboarding-gif">
+            <img src="screenshots/onboarding.gif" alt="FlowReader Onboarding">
+        </div>
+        
+        <!-- 3 Screenshots in a row -->
+        <div class="screenshots-row">
             <!-- Library -->
             <div>
                 <div class="phone-mockup">
